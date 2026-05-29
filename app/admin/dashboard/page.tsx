@@ -5,6 +5,17 @@ import { getDb } from '@/lib/mongodb';
 import { formatDateShort } from '@/lib/utils';
 import { FileText, Eye, Star, TrendingUp, PenSquare, ArrowUpRight, CheckCircle, Clock } from 'lucide-react';
 
+interface RecentPost {
+  _id: string;
+  title: string;
+  slug: string;
+  published: boolean;
+  views: number;
+  createdAt: string;
+  category: string;
+  readTime?: string;
+}
+
 async function getStats() {
   const db = await getDb();
   const [total, published, drafts, featured, viewsAgg, recentPosts, categories] = await Promise.all([
@@ -30,7 +41,7 @@ async function getStats() {
     drafts,
     featured,
     totalViews: viewsAgg[0]?.total || 0,
-    recentPosts: recentPosts.map((p) => ({ ...p, _id: p._id.toString() })),
+    recentPosts: recentPosts.map((p) => ({ ...p, _id: p._id.toString() })) as RecentPost[],
     categories: categories.map((c) => ({ name: c._id, count: c.count })),
   };
 }
